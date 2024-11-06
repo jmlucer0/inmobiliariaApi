@@ -17,7 +17,6 @@ public class ClienteDto {
     String name;
     String lastname;
     Direccion direccion;
-    //List<Propiedad> propiedadList;
     String phoneNumber;
     boolean active;
 

@@ -1,6 +1,7 @@
 package com.propiaInmoviliaria.propia.controller;
 
 import com.propiaInmoviliaria.propia.dtos.ClienteDto;
+import com.propiaInmoviliaria.propia.mapper.ClienteMapper;
 import com.propiaInmoviliaria.propia.model.Cliente;
 import com.propiaInmoviliaria.propia.service.ClienteService;
 import com.propiaInmoviliaria.propia.util.ClienteRepresentationModelAssembler;
@@ -18,13 +19,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/cliente")
 public class ClienteController {
 
+    private final ClienteMapper mapper;
     private final ClienteService clienteService;
     private final ClienteRepresentationModelAssembler clienteAssembler;
     private final PagedResourcesAssembler<ClienteDto> pagedResourcesAssembler;
 
-    public ClienteController(ClienteService clienteService,
+    public ClienteController(ClienteMapper mapper, ClienteService clienteService,
                              ClienteRepresentationModelAssembler clienteAssembler,
                              PagedResourcesAssembler<ClienteDto> pagedResourcesAssembler) {
+        this.mapper = mapper;
         this.clienteService = clienteService;
         this.clienteAssembler = clienteAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
@@ -47,7 +50,7 @@ public class ClienteController {
         ClienteDto clienteDto = new ClienteDto(cliente);
 
         EntityModel<ClienteDto> clienteModel = EntityModel.of(clienteDto,
-                linkTo(methodOn(ClienteController.class).searchClienteById(id)).withSelfRel(),
+                linkTo(methodOn(ClienteController.class).searchClienteById(cliente.getId())).withSelfRel(),
                 linkTo(methodOn(ClienteController.class).updateCliente(id, clienteDto)).withRel("update"),
                 linkTo(methodOn(ClienteController.class).deleteCliente(id)).withRel("delete"),
                 linkTo(methodOn(ClienteController.class).clienteList(null)).withRel("clientes"));
@@ -55,21 +58,29 @@ public class ClienteController {
         return ResponseEntity.ok(clienteModel);
     }
 
+
     @PostMapping("/register")
-    public ResponseEntity<ClienteDto> registerNewCliente(@RequestBody ClienteDto ClienteDto){
-        Cliente cliente = clienteService.saveCliente(ClienteDto);
-        ClienteDto datosCliente = new ClienteDto(cliente);
-        return ResponseEntity.ok().body(datosCliente);
+    public ResponseEntity<EntityModel<ClienteDto>> registrarNuevoCliente(@RequestBody ClienteDto clienteDto) {
+        Cliente cliente = clienteService.saveCliente(clienteDto);
+        ClienteDto datosCliente = mapper.toDto(cliente);
+
+        EntityModel<ClienteDto> clienteModel = EntityModel.of(datosCliente,
+                linkTo(methodOn(ClienteController.class).searchClienteById(cliente.getId())).withSelfRel(),
+                linkTo(methodOn(ClienteController.class).updateCliente(cliente.getId(), null)).withRel("update"),
+                linkTo(methodOn(ClienteController.class).deleteCliente(cliente.getId())).withRel("delete"),
+                linkTo(methodOn(ClienteController.class).clienteList(null)).withRel("clientes"));
+
+        return ResponseEntity.ok(clienteModel);
     }
+
 
     @PostMapping("/{id}")
     public ResponseEntity<EntityModel<ClienteDto>> updateCliente (@RequestParam Long id, @RequestBody ClienteDto clienteDto){
-        Cliente cliente = clienteService.updateCliente(clienteDto);
+        Cliente cliente = clienteService.updateCliente(id, clienteDto);
         ClienteDto clienteUpdate = new ClienteDto(cliente);
 
-
         EntityModel<ClienteDto> clienteDtoModel = EntityModel.of(clienteUpdate,
-                linkTo(methodOn(ClienteController.class).searchClienteById(id)).withSelfRel(),
+                linkTo(methodOn(ClienteController.class).searchClienteById(cliente.getId())).withSelfRel(),
                 linkTo(methodOn(ClienteController.class).updateCliente(id, clienteUpdate)).withRel("update"),
                 linkTo(methodOn(ClienteController.class).clienteList(null)).withRel("clientes"));
         return ResponseEntity.ok(clienteDtoModel);
