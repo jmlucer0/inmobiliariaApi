@@ -47,14 +47,13 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<ClienteDto>> searchClienteById(@PathVariable Long id) {
         Cliente cliente = clienteService.searchById(id);
-        ClienteDto clienteDto = new ClienteDto(cliente);
+        ClienteDto clienteDto = mapper.toDto(cliente);
 
         EntityModel<ClienteDto> clienteModel = EntityModel.of(clienteDto,
                 linkTo(methodOn(ClienteController.class).searchClienteById(cliente.getId())).withSelfRel(),
                 linkTo(methodOn(ClienteController.class).updateCliente(id, clienteDto)).withRel("update"),
                 linkTo(methodOn(ClienteController.class).deleteCliente(id)).withRel("delete"),
                 linkTo(methodOn(ClienteController.class).clienteList(null)).withRel("clientes"));
-
         return ResponseEntity.ok(clienteModel);
     }
 
