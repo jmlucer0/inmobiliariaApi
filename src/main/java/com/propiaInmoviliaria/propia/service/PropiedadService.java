@@ -93,4 +93,9 @@ public class PropiedadService {
         }
         return true;
     }
+
+    public Page<PropiedadDto> buscarPorCalleYNumero(String calle, String numero, String city, Pageable pageable){
+        Page<Propiedad> propiedades = propiedadRepository.findByStreetAndNumberAndCity(calle, numero, city, pageable);
+        return propiedades.map(mapper::propiedadDto);
+    }
 }

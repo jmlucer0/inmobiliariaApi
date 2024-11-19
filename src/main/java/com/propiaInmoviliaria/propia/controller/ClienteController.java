@@ -6,6 +6,8 @@ import com.propiaInmoviliaria.propia.model.Cliente;
 import com.propiaInmoviliaria.propia.service.ClienteService;
 import com.propiaInmoviliaria.propia.util.ClienteRepresentationModelAssembler;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +36,7 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<PagedModel<EntityModel<ClienteDto>>> clienteList(Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<ClienteDto>>> clienteList(@Parameter(hidden = true)Pageable pageable) {
         if (pageable.isUnpaged() || pageable.getPageSize() <= 0){
             pageable = Pageable.ofSize(5);
         }

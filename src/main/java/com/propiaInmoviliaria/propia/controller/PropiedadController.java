@@ -4,12 +4,14 @@ import com.propiaInmoviliaria.propia.dtos.PropiedadDto;
 import com.propiaInmoviliaria.propia.mapper.PropiedadMapper;
 import com.propiaInmoviliaria.propia.model.Propiedad;
 import com.propiaInmoviliaria.propia.service.PropiedadService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +45,7 @@ public class PropiedadController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<PagedModel<EntityModel<PropiedadDto>>> listarPropiedades(Pageable pageable){
+    public ResponseEntity<PagedModel<EntityModel<PropiedadDto>>> listarPropiedades(@Parameter(hidden = true)Pageable pageable){
         if (pageable.isUnpaged() || pageable.getPageSize() <= 0){
             pageable = Pageable.ofSize(5);
         }
@@ -93,6 +95,33 @@ public class PropiedadController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/calle-numero-ciudad")
+    public ResponseEntity<PagedModel<EntityModel<PropiedadDto>>> buscarPorCalleNumeroCiudad(
+            @RequestParam(value = "calle", required = false) String calle,
+            @RequestParam(value = "numero", required = false) String numero,
+            @RequestParam(value = "ciudad", required = false) String ciudad,
+            @Parameter(hidden = true)Pageable pageable){
+        if (pageable.isUnpaged() || pageable.getPageSize() <= 0){
+            pageable = Pageable.ofSize(5);
+        }
+        if (calle == null && numero == null && ciudad == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        Page<PropiedadDto> propiedades = propiedadService.buscarPorCalleYNumero(calle, numero, ciudad, pageable);
+
+        List<EntityModel<PropiedadDto>> entityModels = propiedades.getContent().stream()
+                .map(propiedadDto -> EntityModel.of(propiedadDto,
+                        linkTo(methodOn(PropiedadController.class).buscarPropiedadPorId(propiedadDto.getId())).withSelfRel()))
+                .collect(Collectors.toList());
+
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
+                propiedades.getSize(), propiedades.getNumber(), propiedades.getTotalElements());
+
+        PagedModel<EntityModel<PropiedadDto>> propiedadPageModel = PagedModel.of(entityModels, pageMetadata);
+
+        return ResponseEntity.ok(propiedadPageModel);
     }
 
 }

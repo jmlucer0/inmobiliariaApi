@@ -24,7 +24,7 @@ public class Propiedad {
     @JoinColumn(name = "cliente_id")
     Cliente cliente;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     Direccion direccion;
 
     Double superficie;
