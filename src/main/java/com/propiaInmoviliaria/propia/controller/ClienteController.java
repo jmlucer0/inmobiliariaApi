@@ -1,11 +1,11 @@
 package com.propiaInmoviliaria.propia.controller;
 
+import com.propiaInmoviliaria.propia.assembler.ClienteModelAssembler;
 import com.propiaInmoviliaria.propia.dtos.ClienteDto;
 import com.propiaInmoviliaria.propia.mapper.ClienteMapper;
 import com.propiaInmoviliaria.propia.model.Cliente;
 import com.propiaInmoviliaria.propia.service.ClienteService;
 import com.propiaInmoviliaria.propia.util.ClienteRepresentationModelAssembler;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.transaction.Transactional;
@@ -17,6 +17,9 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/cliente")
 public class ClienteController {
@@ -24,15 +27,15 @@ public class ClienteController {
     private final ClienteMapper mapper;
     private final ClienteService clienteService;
     private final ClienteRepresentationModelAssembler clienteAssembler;
-    private final PagedResourcesAssembler<ClienteDto> pagedResourcesAssembler;
+    private final ClienteModelAssembler modelAssembler;
 
     public ClienteController(ClienteMapper mapper, ClienteService clienteService,
                              ClienteRepresentationModelAssembler clienteAssembler,
-                             PagedResourcesAssembler<ClienteDto> pagedResourcesAssembler) {
+                             PagedResourcesAssembler<ClienteDto> pagedResourcesAssembler, ClienteModelAssembler modelAssembler) {
         this.mapper = mapper;
         this.clienteService = clienteService;
         this.clienteAssembler = clienteAssembler;
-        this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.modelAssembler = modelAssembler;
     }
 
     @GetMapping
@@ -41,8 +44,11 @@ public class ClienteController {
             pageable = Pageable.ofSize(5);
         }
         Page<ClienteDto> clientesPage = clienteService.findAllActiveCliente(pageable);
-        PagedModel<EntityModel<ClienteDto>> pagedModel = pagedResourcesAssembler.toModel(clientesPage);
-        return ResponseEntity.ok(pagedModel);
+        List<EntityModel<ClienteDto>> entityModels = clientesPage.stream()
+                .map(clienteDto -> modelAssembler.toModel(clienteDto)).collect(Collectors.toList());
+        PagedModel<EntityModel<ClienteDto>> clientePageModel = PagedModel.of(entityModels,
+                new PagedModel.PageMetadata(clientesPage.getSize(), clientesPage.getNumber(), clientesPage.getTotalElements()));
+        return ResponseEntity.ok(clientePageModel);
 
     }
 
@@ -50,13 +56,7 @@ public class ClienteController {
     public ResponseEntity<EntityModel<ClienteDto>> searchClienteById(@PathVariable Long id) {
         Cliente cliente = clienteService.searchById(id);
         ClienteDto clienteDto = mapper.toDto(cliente);
-
-        EntityModel<ClienteDto> clienteModel = EntityModel.of(clienteDto,
-                linkTo(methodOn(ClienteController.class).searchClienteById(cliente.getId())).withSelfRel(),
-                linkTo(methodOn(ClienteController.class).updateCliente(id, clienteDto)).withRel("update"),
-                linkTo(methodOn(ClienteController.class).deleteCliente(id)).withRel("delete"),
-                linkTo(methodOn(ClienteController.class).clienteList(null)).withRel("clientes"));
-        return ResponseEntity.ok(clienteModel);
+        return ResponseEntity.ok(modelAssembler.toModel(clienteDto));
     }
 
 
@@ -64,14 +64,7 @@ public class ClienteController {
     public ResponseEntity<EntityModel<ClienteDto>> registrarNuevoCliente(@RequestBody ClienteDto clienteDto) {
         Cliente cliente = clienteService.saveCliente(clienteDto);
         ClienteDto datosCliente = mapper.toDto(cliente);
-
-        EntityModel<ClienteDto> clienteModel = EntityModel.of(datosCliente,
-                linkTo(methodOn(ClienteController.class).searchClienteById(cliente.getId())).withSelfRel(),
-                linkTo(methodOn(ClienteController.class).updateCliente(cliente.getId(), null)).withRel("update"),
-                linkTo(methodOn(ClienteController.class).deleteCliente(cliente.getId())).withRel("delete"),
-                linkTo(methodOn(ClienteController.class).clienteList(null)).withRel("clientes"));
-
-        return ResponseEntity.ok(clienteModel);
+        return ResponseEntity.ok(modelAssembler.toModel(datosCliente));
     }
 
 
@@ -79,12 +72,7 @@ public class ClienteController {
     public ResponseEntity<EntityModel<ClienteDto>> updateCliente (@RequestParam Long id, @RequestBody ClienteDto clienteDto){
         Cliente cliente = clienteService.updateCliente(id, clienteDto);
         ClienteDto clienteUpdate = new ClienteDto(cliente);
-
-        EntityModel<ClienteDto> clienteDtoModel = EntityModel.of(clienteUpdate,
-                linkTo(methodOn(ClienteController.class).searchClienteById(cliente.getId())).withSelfRel(),
-                linkTo(methodOn(ClienteController.class).updateCliente(id, clienteUpdate)).withRel("update"),
-                linkTo(methodOn(ClienteController.class).clienteList(null)).withRel("clientes"));
-        return ResponseEntity.ok(clienteDtoModel);
+      return ResponseEntity.ok(modelAssembler.toModel(clienteUpdate));
     }
 
 
