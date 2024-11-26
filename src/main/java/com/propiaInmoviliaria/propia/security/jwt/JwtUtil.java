@@ -1,16 +1,18 @@
 package com.propiaInmoviliaria.propia.security.jwt;
 
+import io.jsonwebtoken.security.Keys;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
 
 import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private String SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256).getAlgorithm();
+    private String SECRET_KEY = String.valueOf(Keys.secretKeyFor(SignatureAlgorithm.HS256));
 
     public String generateToken(String username) {
         return Jwts.builder()

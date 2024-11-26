@@ -1,5 +1,6 @@
 package com.propiaInmoviliaria.propia.controller;
 
+import com.propiaInmoviliaria.propia.security.AuthRequest;
 import com.propiaInmoviliaria.propia.security.AuthUserRegister;
 import com.propiaInmoviliaria.propia.service.UserService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,4 +39,19 @@ public class AuthController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity userLogin(@RequestBody AuthRequest request){
+        try {
+            String jwt = userService.login(request);
+            return ResponseEntity.ok(jwt);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .badRequest()
+                    .body("Nombre de usuario o contraseña inválidos.");
+        }
+
+    }
+
 }

@@ -3,7 +3,6 @@ package com.propiaInmoviliaria.propia.mapper;
 import com.propiaInmoviliaria.propia.model.User;
 import com.propiaInmoviliaria.propia.security.AuthUserRegister;
 import com.propiaInmoviliaria.propia.security.Role;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
