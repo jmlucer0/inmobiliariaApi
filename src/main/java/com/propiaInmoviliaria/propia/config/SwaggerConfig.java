@@ -1,8 +1,5 @@
 package com.propiaInmoviliaria.propia.config;
 
-import com.propiaInmoviliaria.propia.security.AuthRequest;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.customizers.OpenApiCustomizer;
@@ -27,8 +24,10 @@ public class SwaggerConfig {
                                         .bearerFormat("JWT")))
                 .info(new io.swagger.v3.oas.models.info.Info()
                         .title("ImobiliariaApi")
-                        .version("1.0")
-                        .description("API documentation")
+                        .version("1.0.0")
+                        .description("API REST para la gestión inmobiliaria, diseñada para organizar propiedades y clientes." +
+                                " Permite buscar propiedades por dirección y estado (disponibles, en reparación, desocupadas, etc.) y consultar las propiedades asociadas a un cliente. " +
+                                "Ideal para empresas que buscan optimizar la administración de su inventario inmobiliario.")
                 );
 
     }
