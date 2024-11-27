@@ -4,7 +4,6 @@ import com.propiaInmoviliaria.propia.assembler.ClienteModelAssembler;
 import com.propiaInmoviliaria.propia.dtos.ClienteDto;
 import com.propiaInmoviliaria.propia.mapper.ClienteMapper;
 import com.propiaInmoviliaria.propia.model.Cliente;
-import com.propiaInmoviliaria.propia.security.AuthUserRegister;
 import com.propiaInmoviliaria.propia.service.ClienteService;
 import com.propiaInmoviliaria.propia.util.ClienteRepresentationModelAssembler;
 
