@@ -1,4 +1,11 @@
+# Inmobiliaria API
+
 Esta API está orientada a empresas inmobiliarias para gestionar clientes y propiedades. Permite a los usuarios realizar operaciones sobre clientes, propiedades y realizar búsquedas filtradas por diferentes criterios, como la dirección de las propiedades y su estado (disponible, en reparación, etc.). Además, tiene un sistema de autenticación con JWT para garantizar la seguridad de las operaciones.
+
+## Estado del Proyecto
+
+> **Aviso**: Esta API aún está en desarrollo y algunas funcionalidades pueden no estar completamente implementadas o pueden estar sujetas a cambios. Si estás utilizando la API, ten en cuenta que podrían ocurrir actualizaciones importantes que afecten a los endpoints o a la estructura de los datos.
+
 
 ## Funcionalidades
 
