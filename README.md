@@ -43,7 +43,7 @@ Sigue los siguientes pasos para configurar y ejecutar la API en tu máquina loca
 
 ### Clona el repositorio:
 ```dotenv
-git clone https://github.com/tu-usuario/inmobiliaria-api.git
+git clone https://github.com/jmlucer0/inmobiliariaApi
 cd inmobiliaria-api
 ```
 Crea tus propias variables de entorno o simplente remplazalas con los datos correspondientes.
