@@ -64,7 +64,9 @@ public class ClienteController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Client registered successfully.",
-                    content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE)
+                    content = @Content(
+                            schema = @Schema(implementation = EntityModel.class)
+                    )
             )
     }
     )
@@ -78,12 +80,12 @@ public class ClienteController {
     @Operation(
             summary = "Update Client",
             description = "Updates an existing client with the provided ID and new data. Returns the updated client details.",
-            tags = {"Cliente Management", "Update"},
+            tags = {"Cliente Management"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Updated client details.",
                     required = true,
                     content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            mediaType = "application/json",
                             schema = @Schema(implementation = ClienteDto.class)
                     )
             )
@@ -92,17 +94,19 @@ public class ClienteController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Client registered successfully.",
-                    content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE)
+                    content = @Content(
+                            schema = @Schema(implementation = EntityModel.class)
+                    )
             ),
             @ApiResponse(
                     responseCode = "400",
                     description = "Invalid client data.",
-                    content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE)
+                    content = @Content(mediaType = "text/plain")
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Client not found.",
-                    content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE)
+                    content = @Content(mediaType = "text/plain")
             )
     }
     )
@@ -112,7 +116,6 @@ public class ClienteController {
         return ResponseEntity.ok(modelAssembler.toModel(clienteUpdate));
     }
 
-    @GetMapping("/{id}")
     @Operation(
             summary = "Get Client by ID",
             description = "Returns the details of a client based on the provided client ID.",
@@ -122,14 +125,23 @@ public class ClienteController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Client found and returned.",
-                    content = @Content(mediaType = "application/json")
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = EntityModel.class)
+                    )
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Client not found.",
                     content = @Content(mediaType = "text/plain")
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error.",
+                    content = @Content(mediaType = "text/plain")
             )
     })
+    @GetMapping("/clients/{id}")
     public ResponseEntity<EntityModel<ClienteDto>> searchClienteById(@PathVariable Long id) {
         Cliente cliente = clienteService.searchById(id);
         ClienteDto clienteDto = mapper.toDto(cliente);
@@ -142,7 +154,7 @@ public class ClienteController {
     @Operation(
             summary = "Delete Client",
             description = "Deletes a client from the system based on the provided ID.",
-            tags = {"Client Management", "Delete"}
+            tags = {"Client Management"}
     )
     @ApiResponses(value = {
             @ApiResponse(

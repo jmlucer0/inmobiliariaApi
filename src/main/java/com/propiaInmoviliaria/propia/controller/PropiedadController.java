@@ -5,7 +5,12 @@ import com.propiaInmoviliaria.propia.dtos.PropiedadDto;
 import com.propiaInmoviliaria.propia.mapper.PropiedadMapper;
 import com.propiaInmoviliaria.propia.model.Propiedad;
 import com.propiaInmoviliaria.propia.service.PropiedadService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
@@ -21,6 +26,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/propiedad")
+@Tag(name = "Real Estate Property Controller", description = "Manages real estate properties")
 public class PropiedadController {
 
     private final PropiedadService propiedadService;
@@ -33,6 +39,37 @@ public class PropiedadController {
         this.modelAssembler = modelAssembler;
     }
 
+    @Operation(
+            summary = "Register a new real estate property",
+            tags = {"Propiedad Management"},
+            description = "Creates a new real estate property with the provided details and returns the registered property information.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Required data to register a new real estate property.",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = PropiedadDto.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Property successfully registered",
+                            content = @Content(
+                                    schema = @Schema(implementation = EntityModel.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input data",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content
+                    )
+            }
+    )
     @PostMapping("/register")
     public ResponseEntity<EntityModel<PropiedadDto>> registrarPropiedad(@RequestBody PropiedadDto propiedadDto){
         Propiedad nuevaPropiedad = propiedadService.savePropiedad(propiedadDto);

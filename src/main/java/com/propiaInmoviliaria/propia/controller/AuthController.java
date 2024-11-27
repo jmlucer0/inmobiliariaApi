@@ -30,7 +30,7 @@ public class AuthController {
     @Operation(
             summary = "Register User",
             description = "Resgister a new user",
-            tags = {"Authentication", "Register"},
+            tags = {"User Management"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Required data to register a new user.",
                     required = true,
@@ -65,7 +65,7 @@ public class AuthController {
     @Operation(
             summary = "Delete User by ID",
             description = "Deletes a user from the system based on the provided ID.",
-            tags = {"Authentication", "User Management"}
+            tags = {"User Management"}
 
     )
     @ApiResponses( value = {
@@ -89,7 +89,7 @@ public class AuthController {
     @Operation(
             summary = "Login User",
             description = "Authenticates a user using their credentials and returns a JWT token if successful.",
-            tags = {"Authentication", "Login"},
+            tags = {"User Management"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "User credentials required for authentication.",
                     required = true,
