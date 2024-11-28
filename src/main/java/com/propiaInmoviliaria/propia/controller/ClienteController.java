@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cliente")
-@Tag(name = "Cliente", description = "Controller for Cliente")
+@Tag(name = "Client", description = "Controller for Client")
 public class ClienteController {
 
     private final ClienteMapper mapper;
@@ -50,7 +50,7 @@ public class ClienteController {
     @Operation(
             summary = "Register Client",
             description = "Resgister data for a new Client",
-            tags = {"Cliente", "Register"},
+            tags = {"Cliente"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Required data to register a new Client.",
                     required = true,
