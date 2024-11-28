@@ -5,7 +5,6 @@ import com.propiaInmoviliaria.propia.dtos.ClienteDto;
 import com.propiaInmoviliaria.propia.mapper.ClienteMapper;
 import com.propiaInmoviliaria.propia.model.Cliente;
 import com.propiaInmoviliaria.propia.service.ClienteService;
-import com.propiaInmoviliaria.propia.util.ClienteRepresentationModelAssembler;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,15 +33,12 @@ public class ClienteController {
 
     private final ClienteMapper mapper;
     private final ClienteService clienteService;
-    private final ClienteRepresentationModelAssembler clienteAssembler;
     private final ClienteModelAssembler modelAssembler;
 
     public ClienteController(ClienteMapper mapper, ClienteService clienteService,
-                             ClienteRepresentationModelAssembler clienteAssembler,
                              PagedResourcesAssembler<ClienteDto> pagedResourcesAssembler, ClienteModelAssembler modelAssembler) {
         this.mapper = mapper;
         this.clienteService = clienteService;
-        this.clienteAssembler = clienteAssembler;
         this.modelAssembler = modelAssembler;
     }
 
@@ -148,7 +144,6 @@ public class ClienteController {
         return ResponseEntity.ok(modelAssembler.toModel(clienteDto));
     }
 
-
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(
@@ -206,5 +201,7 @@ public class ClienteController {
         return ResponseEntity.ok(clientePageModel);
 
     }
+
+
 
 }

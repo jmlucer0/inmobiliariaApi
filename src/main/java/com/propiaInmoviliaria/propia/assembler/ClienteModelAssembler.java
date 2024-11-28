@@ -19,6 +19,5 @@ public class ClienteModelAssembler implements RepresentationModelAssembler<Clien
                 linkTo(methodOn(ClienteController.class).deleteCliente(clienteDto.getId())).withRel("delete"),
                 linkTo(methodOn(ClienteController.class).clienteList(null)).withRel("clientes")
                 );
-
     }
 }
