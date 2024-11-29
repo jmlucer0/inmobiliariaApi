@@ -137,7 +137,7 @@ public class ClienteController {
                     content = @Content(mediaType = "text/plain")
             )
     })
-    @GetMapping("/clients/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EntityModel<ClienteDto>> searchClienteById(@PathVariable Long id) {
         Cliente cliente = clienteService.searchById(id);
         ClienteDto clienteDto = mapper.toDto(cliente);
