@@ -1,8 +1,7 @@
 package com.propiaInmoviliaria.propia.assembler;
 
 import com.propiaInmoviliaria.propia.controller.PropiedadController;
-import com.propiaInmoviliaria.propia.dtos.PropiedadDto;
-import org.springframework.data.domain.Pageable;
+import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;

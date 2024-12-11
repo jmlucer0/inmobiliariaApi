@@ -1,8 +1,8 @@
 package com.propiaInmoviliaria.propia.controller;
 
 import com.propiaInmoviliaria.propia.assembler.PropiedadModelAssembler;
-import com.propiaInmoviliaria.propia.dtos.ClienteDto;
-import com.propiaInmoviliaria.propia.dtos.PropiedadDto;
+import com.propiaInmoviliaria.propia.dtos.propiedad.CrearPropiedadDto;
+import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
 import com.propiaInmoviliaria.propia.mapper.PropiedadMapper;
 import com.propiaInmoviliaria.propia.model.Propiedad;
 import com.propiaInmoviliaria.propia.service.PropiedadService;
@@ -75,7 +75,7 @@ public class PropiedadController {
             }
     )
     @PostMapping("/register")
-    public ResponseEntity<EntityModel<PropiedadDto>> registrarPropiedad(@RequestBody PropiedadDto propiedadDto){
+    public ResponseEntity<EntityModel<PropiedadDto>> registrarPropiedad(@RequestBody CrearPropiedadDto propiedadDto){
         Propiedad nuevaPropiedad = propiedadService.savePropiedad(propiedadDto);
         PropiedadDto datosPropiedad = mapper.propiedadDto(nuevaPropiedad);
         return ResponseEntity.ok(modelAssembler.toModel(datosPropiedad));
@@ -114,7 +114,7 @@ public class PropiedadController {
     @GetMapping("/{id}")
     @Operation(
             summary = "Get Real Estate Property by ID",
-            description = "Returns the details of a Real Estate Property based on the provided client ID.",
+            description = "Returns the details of a Real Estate Property based on the provided ID.",
             tags = {"Real Estate Property Management"}
     )
     @ApiResponses(value = {
@@ -153,31 +153,31 @@ public class PropiedadController {
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ClienteDto.class)
+                            schema = @Schema(implementation = PropiedadDto.class)
                     )
             )
     )
     @ApiResponses( value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Real Estate Property registered successfully.",
+                    description = "Real Estate Property updated successfully.",
                     content = @Content(
                             schema = @Schema(implementation = EntityModel.class)
                     )
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid client data.",
+                    description = "Invalid Real Estate Property data.",
                     content = @Content(mediaType = "text/plain")
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Client not found.",
+                    description = "Real Estate Property not found.",
                     content = @Content(mediaType = "text/plain")
             )
     }
     )
-    public ResponseEntity<EntityModel<PropiedadDto>> actualizarPropiedad(@RequestParam Long id, @RequestBody PropiedadDto propiedadDto){
+    public ResponseEntity<EntityModel<PropiedadDto>> actualizarPropiedad(@RequestParam Long id, @RequestBody CrearPropiedadDto propiedadDto){
         Propiedad propiedad = propiedadService.actualizarPropiedad(id, propiedadDto);
         PropiedadDto datosPropiedad = mapper.propiedadDto(propiedad);
         return ResponseEntity.ok(modelAssembler.toModel(datosPropiedad));

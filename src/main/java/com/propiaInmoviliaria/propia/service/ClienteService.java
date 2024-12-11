@@ -1,6 +1,6 @@
 package com.propiaInmoviliaria.propia.service;
 
-import com.propiaInmoviliaria.propia.dtos.ClienteDto;
+import com.propiaInmoviliaria.propia.dtos.cliente.ClienteDto;
 import com.propiaInmoviliaria.propia.mapper.ClienteMapper;
 import com.propiaInmoviliaria.propia.model.Cliente;
 import com.propiaInmoviliaria.propia.model.Direccion;
@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import static com.propiaInmoviliaria.propia.util.FieldUpdater.updateField;
+import static com.propiaInmoviliaria.propia.util.updater.FieldUpdater.updateField;
 
 
 
@@ -48,8 +48,7 @@ public class ClienteService {
     }
 
     public Cliente searchById(Long id){
-        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
-        return cliente;
+        return clienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
     }
 
     @Transactional

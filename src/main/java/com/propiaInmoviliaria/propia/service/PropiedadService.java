@@ -1,18 +1,19 @@
 package com.propiaInmoviliaria.propia.service;
 
-import com.propiaInmoviliaria.propia.dtos.PropiedadDto;
+import com.propiaInmoviliaria.propia.dtos.propiedad.CrearPropiedadDto;
+import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
 import com.propiaInmoviliaria.propia.mapper.PropiedadMapper;
 import com.propiaInmoviliaria.propia.model.Cliente;
-import com.propiaInmoviliaria.propia.model.Direccion;
 import com.propiaInmoviliaria.propia.model.Propiedad;
 import com.propiaInmoviliaria.propia.repository.ClienteRepository;
 import com.propiaInmoviliaria.propia.repository.PropiedadRepository;
+import com.propiaInmoviliaria.propia.util.updater.PropiedadUpdater;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import static com.propiaInmoviliaria.propia.util.FieldUpdater.updateField;
+
 
 
 @Service
@@ -21,22 +22,24 @@ public class PropiedadService {
     private final PropiedadRepository propiedadRepository;
     private final ClienteRepository clienteRepository;
     private final PropiedadMapper mapper;
+    private final PropiedadUpdater propiedadUpdater;
 
 
-    public PropiedadService(PropiedadRepository propiedadRepository, ClienteRepository clienteRepository, PropiedadMapper mapper) {
+    public PropiedadService(PropiedadRepository propiedadRepository, ClienteRepository clienteRepository, PropiedadMapper mapper, PropiedadUpdater propiedadUpdater) {
         this.propiedadRepository = propiedadRepository;
         this.clienteRepository = clienteRepository;
         this.mapper = mapper;
+        this.propiedadUpdater = propiedadUpdater;
     }
 
     @Transactional
-    public Propiedad savePropiedad(PropiedadDto propiedadDto) {
+    public Propiedad savePropiedad(CrearPropiedadDto propiedadDto) {
         if (propiedadDto == null) {
             throw new IllegalArgumentException("Propiedad no puede ser nulo");
         }
-        Propiedad newPropiedad = mapper.toEntity(propiedadDto);
-        if (propiedadDto.getCliente() != null) {
-            Cliente cliente = clienteRepository.findById(propiedadDto.getCliente())
+        Propiedad newPropiedad = mapper.toEntityFromCrearPropiedad(propiedadDto);
+        if (propiedadDto.getClienteId() != null) {
+            Cliente cliente = clienteRepository.findById(propiedadDto.getClienteId())
                     .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
             newPropiedad.setCliente(cliente);
         }
@@ -58,32 +61,20 @@ public class PropiedadService {
     }
 
     @Transactional
-    public Propiedad actualizarPropiedad(Long id, PropiedadDto propiedadDto){
+    public Propiedad actualizarPropiedad(Long id, CrearPropiedadDto propiedadDto){
         Propiedad propiedad = propiedadRepository.findById(id).orElseThrow(()->new EntityNotFoundException(("Propiedad no enontrada")));
-        if (propiedadDto.getCliente() != null) {
-            Cliente cliente = clienteRepository.findById(propiedadDto.getCliente())
+        Cliente cliente = clienteRepository.findById(propiedadDto.getClienteId())
                     .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
-            propiedad.setCliente(cliente);
-        }
 
-        updateField(propiedadDto.getTipoDePropiedad(), propiedad::setTipoDePropiedad);
-        updateField(propiedadDto.getDisponibilidad(), propiedad::setDisponibilidad);
-        updateField(propiedadDto.getImagenes(), propiedad::setImagenes);
-        updateField(propiedadDto.getPatio(), propiedad::setPatio);
-        updateField(propiedadDto.getCochera(), propiedad::setCochera);
-        updateField(propiedadDto.getPrecio(), propiedad::setPrecio);
-        updateField(propiedadDto.getSuperficie(), propiedad::setSuperficie);
+        boolean actualizado = propiedadUpdater.actualizarPropiedad(propiedad, propiedadDto, cliente);
 
-        if (propiedadDto.getDireccion() != null) {
-            Direccion direccion = propiedad.getDireccion() != null ? propiedad.getDireccion() : new Direccion();
-            updateField(propiedadDto.getDireccion().getStreet(), direccion::setStreet);
-            updateField(propiedadDto.getDireccion().getNumber(), direccion::setNumber);
-            updateField(propiedadDto.getDireccion().getCity(), direccion::setCity);
-
-            propiedad.setDireccion(direccion);
+        if (actualizado){
+            return propiedadRepository.save(propiedad);
         }
         return propiedad;
     }
+
+    //crear un metodo para que actualize las imagenes con otro endpoint
 
     public boolean borrarPropiedad(Long id){
         Propiedad propiedad = propiedadRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Propiedad no encontrada"));

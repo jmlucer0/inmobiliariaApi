@@ -1,47 +1,35 @@
-package com.propiaInmoviliaria.propia.model;
+package com.propiaInmoviliaria.propia.dtos.propiedad;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.propiaInmoviliaria.propia.enums.Disponibilidad;
 import com.propiaInmoviliaria.propia.enums.TipoDeOperacion;
 import com.propiaInmoviliaria.propia.enums.TipoDePropiedad;
-import jakarta.persistence.*;
+import com.propiaInmoviliaria.propia.model.Direccion;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Propiedad {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CrearPropiedadDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String numeroDeReferencia;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Long clienteId;
     private Direccion direccion;
-
-    private List<String> imagenes;
     private Double superficieTotal;
     private Double superficieCubierta;
     private Long precio;
-
+    private List<String> imagenes;
     private TipoDePropiedad tipoDePropiedad;
-    private Disponibilidad disponibilidad;
     private TipoDeOperacion tipoDeOperacion;
+    private Disponibilidad disponibilidad;
     private Boolean cochera;
     private Boolean patio;
     private Integer banios;
     private Integer dormitorios;
-    private String obsevaciones;
+    private String observaciones;
 
 }

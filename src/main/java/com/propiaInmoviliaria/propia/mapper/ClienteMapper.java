@@ -1,6 +1,6 @@
 package com.propiaInmoviliaria.propia.mapper;
 
-import com.propiaInmoviliaria.propia.dtos.ClienteDto;
+import com.propiaInmoviliaria.propia.dtos.cliente.ClienteDto;
 import com.propiaInmoviliaria.propia.model.Cliente;
 import com.propiaInmoviliaria.propia.model.Direccion;
 import org.springframework.stereotype.Component;

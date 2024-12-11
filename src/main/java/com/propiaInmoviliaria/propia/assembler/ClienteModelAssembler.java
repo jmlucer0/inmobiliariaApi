@@ -1,7 +1,7 @@
 package com.propiaInmoviliaria.propia.assembler;
 
 import com.propiaInmoviliaria.propia.controller.ClienteController;
-import com.propiaInmoviliaria.propia.dtos.ClienteDto;
+import com.propiaInmoviliaria.propia.dtos.cliente.ClienteDto;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;

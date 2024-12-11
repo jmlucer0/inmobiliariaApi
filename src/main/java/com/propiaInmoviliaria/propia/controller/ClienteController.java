@@ -1,7 +1,7 @@
 package com.propiaInmoviliaria.propia.controller;
 
 import com.propiaInmoviliaria.propia.assembler.ClienteModelAssembler;
-import com.propiaInmoviliaria.propia.dtos.ClienteDto;
+import com.propiaInmoviliaria.propia.dtos.cliente.ClienteDto;
 import com.propiaInmoviliaria.propia.mapper.ClienteMapper;
 import com.propiaInmoviliaria.propia.model.Cliente;
 import com.propiaInmoviliaria.propia.service.ClienteService;

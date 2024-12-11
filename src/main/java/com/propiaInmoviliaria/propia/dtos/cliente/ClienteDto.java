@@ -1,4 +1,4 @@
-package com.propiaInmoviliaria.propia.dtos;
+package com.propiaInmoviliaria.propia.dtos.cliente;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -1,6 +1,5 @@
 package com.propiaInmoviliaria.propia.model;
 
-import com.propiaInmoviliaria.propia.dtos.cliente.ClienteDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,26 +11,22 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Cliente {
+public class Propietario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String name;
-    private String lastname;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Direccion direccion;
 
     @OneToMany
     @ElementCollection
-    private List<Propiedad> propiedadList;
+    private List<Propiedad> propiedades;
 
-    private String phoneNumber;
-    private boolean active;
+    private Boolean activo;
+    private String nombre;
+    private String telefono;
+    private String email;
 
-    public Cliente(ClienteDto cliente) {
-
-    }
 }
