@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PropiedadRepository extends JpaRepository<Propiedad, Long> {
-
-    @Query("SELECT p FROM Propiedad p INNER JOIN p.direccion d WHERE d.street = :street OR d.number = :number OR d.city = :city")
-    Page<Propiedad> findByStreetAndNumberAndCity(
-            @Param("street") String street,
-            @Param("number") String number,
-            @Param("city") String city,
-            Pageable pageable);
+//
+//    @Query("SELECT p FROM Propiedad p INNER JOIN p.direccion d WHERE d.street = :street OR d.number = :number OR d.city = :city")
+//    Page<Propiedad> findByStreetAndNumberAndCity(
+//            @Param("street") String calle,
+//            @Param("number") String numero,
+//            @Param("city") String ciudad,
+//            Pageable pageable);
 }

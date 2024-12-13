@@ -17,7 +17,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CrearPropiedadDto {
 
-    private Long clienteId;
+    private Long propietarioId;
     private Direccion direccion;
     private Double superficieTotal;
     private Double superficieCubierta;

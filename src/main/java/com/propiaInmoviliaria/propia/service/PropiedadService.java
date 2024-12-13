@@ -1,12 +1,14 @@
 package com.propiaInmoviliaria.propia.service;
 
+import com.propiaInmoviliaria.propia.dtos.propiedad.ActualizarPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.CrearPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
 import com.propiaInmoviliaria.propia.mapper.PropiedadMapper;
-import com.propiaInmoviliaria.propia.model.Cliente;
+import com.propiaInmoviliaria.propia.model.Propietario;
 import com.propiaInmoviliaria.propia.model.Propiedad;
-import com.propiaInmoviliaria.propia.repository.ClienteRepository;
+import com.propiaInmoviliaria.propia.repository.PropietarioRepository;
 import com.propiaInmoviliaria.propia.repository.PropiedadRepository;
+import com.propiaInmoviliaria.propia.util.updater.DireccionUpdater;
 import com.propiaInmoviliaria.propia.util.updater.PropiedadUpdater;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -20,16 +22,18 @@ import org.springframework.stereotype.Service;
 public class PropiedadService {
 
     private final PropiedadRepository propiedadRepository;
-    private final ClienteRepository clienteRepository;
+    private final PropietarioRepository propietarioRepository;
     private final PropiedadMapper mapper;
     private final PropiedadUpdater propiedadUpdater;
+    private final DireccionUpdater direccionUpdater;
 
 
-    public PropiedadService(PropiedadRepository propiedadRepository, ClienteRepository clienteRepository, PropiedadMapper mapper, PropiedadUpdater propiedadUpdater) {
+    public PropiedadService(PropiedadRepository propiedadRepository, PropietarioRepository propietarioRepository, PropiedadMapper mapper, PropiedadUpdater propiedadUpdater, DireccionUpdater direccionUpdater) {
         this.propiedadRepository = propiedadRepository;
-        this.clienteRepository = clienteRepository;
+        this.propietarioRepository = propietarioRepository;
         this.mapper = mapper;
         this.propiedadUpdater = propiedadUpdater;
+        this.direccionUpdater = direccionUpdater;
     }
 
     @Transactional
@@ -38,10 +42,10 @@ public class PropiedadService {
             throw new IllegalArgumentException("Propiedad no puede ser nulo");
         }
         Propiedad newPropiedad = mapper.toEntityFromCrearPropiedad(propiedadDto);
-        if (propiedadDto.getClienteId() != null) {
-            Cliente cliente = clienteRepository.findById(propiedadDto.getClienteId())
+        if (propiedadDto.getPropietarioId() != null) {
+            Propietario propietario = propietarioRepository.findById(propiedadDto.getPropietarioId())
                     .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
-            newPropiedad.setCliente(cliente);
+            newPropiedad.setPropietario(propietario);
         }
         propiedadRepository.save(newPropiedad);
         return newPropiedad;
@@ -61,13 +65,19 @@ public class PropiedadService {
     }
 
     @Transactional
-    public Propiedad actualizarPropiedad(Long id, CrearPropiedadDto propiedadDto){
+    public Propiedad actualizarPropiedad(Long id, ActualizarPropiedadDto propiedadDto){
         Propiedad propiedad = propiedadRepository.findById(id).orElseThrow(()->new EntityNotFoundException(("Propiedad no enontrada")));
-        Cliente cliente = clienteRepository.findById(propiedadDto.getClienteId())
-                    .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
+        Propietario propietario = propietarioRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Propietario no encontrado"));
 
-        boolean actualizado = propiedadUpdater.actualizarPropiedad(propiedad, propiedadDto, cliente);
+        System.out.println("Propiedad existente: " + propiedad);
+        System.out.println("Propietario existente: " + propiedad.getPropietario().getId());
+        System.out.println("Propietario ID en DTO: " + propiedadDto.getPropietarioId());
+        boolean actualizado = propiedadUpdater.actualizarPropiedad(propiedad, propiedadDto, propietario);
 
+        if (propiedadDto.getDireccion() != null && propiedad.getDireccion() != null){
+            actualizado |= direccionUpdater.actualizarDireccion(propiedad.getDireccion(), propiedadDto.getDireccion());
+        }
         if (actualizado){
             return propiedadRepository.save(propiedad);
         }
@@ -85,8 +95,4 @@ public class PropiedadService {
         return true;
     }
 
-    public Page<PropiedadDto> buscarPorCalleYNumero(String calle, String numero, String city, Pageable pageable){
-        Page<Propiedad> propiedades = propiedadRepository.findByStreetAndNumberAndCity(calle, numero, city, pageable);
-        return propiedades.map(mapper::propiedadDto);
-    }
 }

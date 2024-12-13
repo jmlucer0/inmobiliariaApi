@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -23,9 +22,9 @@ public class Propiedad {
 
     private String numeroDeReferencia;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "propietario_id")
+    private Propietario propietario;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Direccion direccion;

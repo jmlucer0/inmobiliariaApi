@@ -1,5 +1,7 @@
 package com.propiaInmoviliaria.propia.model;
 
+import com.propiaInmoviliaria.propia.enums.Barrio;
+import com.propiaInmoviliaria.propia.enums.Localidad;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +17,8 @@ public class Direccion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String street;
-    String number;
-    String city;
+    String calle;
+    String numero;
+    Localidad localidad;
+    Barrio barrio;
 }

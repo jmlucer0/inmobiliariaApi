@@ -1,10 +1,12 @@
 package com.propiaInmoviliaria.propia.controller;
 
-import com.propiaInmoviliaria.propia.assembler.ClienteModelAssembler;
-import com.propiaInmoviliaria.propia.dtos.cliente.ClienteDto;
-import com.propiaInmoviliaria.propia.mapper.ClienteMapper;
-import com.propiaInmoviliaria.propia.model.Cliente;
-import com.propiaInmoviliaria.propia.service.ClienteService;
+import com.propiaInmoviliaria.propia.assembler.PropietarioModelAssembler;
+import com.propiaInmoviliaria.propia.dtos.propietario.ActualizarPropietarioDto;
+import com.propiaInmoviliaria.propia.dtos.propietario.CrearPropietarioDto;
+import com.propiaInmoviliaria.propia.dtos.propietario.PropietarioDto;
+import com.propiaInmoviliaria.propia.mapper.PropietarioMapper;
+import com.propiaInmoviliaria.propia.model.Propietario;
+import com.propiaInmoviliaria.propia.service.PropietarioService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,100 +29,100 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/cliente")
-@Tag(name = "Client", description = "Controller for Client")
-public class ClienteController {
+@RequestMapping("/propietario")
+@Tag(name = "Owner", description = "Controller for Owner")
+public class PropietarioController {
 
-    private final ClienteMapper mapper;
-    private final ClienteService clienteService;
-    private final ClienteModelAssembler modelAssembler;
+    private final PropietarioMapper mapper;
+    private final PropietarioService propietarioService;
+    private final PropietarioModelAssembler modelAssembler;
 
-    public ClienteController(ClienteMapper mapper, ClienteService clienteService,
-                             PagedResourcesAssembler<ClienteDto> pagedResourcesAssembler, ClienteModelAssembler modelAssembler) {
+    public PropietarioController(PropietarioMapper mapper, PropietarioService propietarioService,
+                                 PagedResourcesAssembler<PropietarioDto> pagedResourcesAssembler, PropietarioModelAssembler modelAssembler) {
         this.mapper = mapper;
-        this.clienteService = clienteService;
+        this.propietarioService = propietarioService;
         this.modelAssembler = modelAssembler;
     }
 
     @PostMapping("/register")
     @Operation(
-            summary = "Register Client",
-            description = "Resgister data for a new Client",
-            tags = {"Cliente"},
+            summary = "Register Owner",
+            description = "Resgister data for a new Owner",
+            tags = {"Owner Management"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Required data to register a new Client.",
+                    description = "Required data to register a new Owner.",
                     required = true,
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ClienteDto.class)
+                            schema = @Schema(implementation = PropietarioDto.class)
                     )
             )
     )
     @ApiResponses( value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Client registered successfully.",
+                    description = "Owner registered successfully.",
                     content = @Content(
                             schema = @Schema(implementation = EntityModel.class)
                     )
             )
     }
     )
-    public ResponseEntity<EntityModel<ClienteDto>> registrarNuevoCliente(@RequestBody ClienteDto clienteDto) {
-        Cliente cliente = clienteService.saveCliente(clienteDto);
-        ClienteDto datosCliente = mapper.toDto(cliente);
+    public ResponseEntity<EntityModel<PropietarioDto>> registrarNuevoCliente(@RequestBody CrearPropietarioDto propietarioDto) {
+        Propietario propietario = propietarioService.savePropietario(propietarioDto);
+        PropietarioDto datosCliente = mapper.toDto(propietario);
         return ResponseEntity.ok(modelAssembler.toModel(datosCliente));
     }
 
     @PostMapping("/{id}")
     @Operation(
-            summary = "Update Client",
-            description = "Updates an existing client with the provided ID and new data. Returns the updated client details.",
-            tags = {"Cliente Management"},
+            summary = "Update Owner",
+            description = "Updates an existing Owner with the provided ID and new data. Returns the updated Owner details.",
+            tags = {"Owner Management"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Updated client details.",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ClienteDto.class)
+                            schema = @Schema(implementation = PropietarioDto.class)
                     )
             )
     )
     @ApiResponses( value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Client registered successfully.",
+                    description = "Owner registered successfully.",
                     content = @Content(
                             schema = @Schema(implementation = EntityModel.class)
                     )
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid client data.",
+                    description = "Invalid Owner data.",
                     content = @Content(mediaType = "text/plain")
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Client not found.",
+                    description = "Owner not found.",
                     content = @Content(mediaType = "text/plain")
             )
     }
     )
-    public ResponseEntity<EntityModel<ClienteDto>> updateCliente (@RequestParam Long id, @RequestBody ClienteDto clienteDto){
-        Cliente cliente = clienteService.updateCliente(id, clienteDto);
-        ClienteDto clienteUpdate = new ClienteDto(cliente);
-        return ResponseEntity.ok(modelAssembler.toModel(clienteUpdate));
+    public ResponseEntity<EntityModel<PropietarioDto>> updatePropietario(@RequestParam Long id, @RequestBody ActualizarPropietarioDto propietarioDto){
+        Propietario propietario = propietarioService.updatePropietario(id, propietarioDto);
+        PropietarioDto propietarioUpdate = mapper.toDto(propietario);
+        return ResponseEntity.ok(modelAssembler.toModel(propietarioUpdate));
     }
 
     @Operation(
-            summary = "Get Client by ID",
-            description = "Returns the details of a client based on the provided client ID.",
+            summary = "Get Owner by ID",
+            description = "Returns the details of a Owner based on the provided Owner ID.",
             tags = {"Client Management"}
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Client found and returned.",
+                    description = "Owner found and returned.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = EntityModel.class)
@@ -128,7 +130,7 @@ public class ClienteController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Client not found.",
+                    description = "Owner not found.",
                     content = @Content(mediaType = "text/plain")
             ),
             @ApiResponse(
@@ -138,33 +140,33 @@ public class ClienteController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<ClienteDto>> searchClienteById(@PathVariable Long id) {
-        Cliente cliente = clienteService.searchById(id);
-        ClienteDto clienteDto = mapper.toDto(cliente);
-        return ResponseEntity.ok(modelAssembler.toModel(clienteDto));
+    public ResponseEntity<EntityModel<PropietarioDto>> searchClienteById(@PathVariable Long id) {
+        Propietario propietario = propietarioService.searchById(id);
+        PropietarioDto propietarioDto = mapper.toDto(propietario);
+        return ResponseEntity.ok(modelAssembler.toModel(propietarioDto));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(
-            summary = "Delete Client",
-            description = "Deletes a client from the system based on the provided ID.",
-            tags = {"Client Management"}
+            summary = "Delete Owner",
+            description = "Deletes a Owner from the system based on the provided ID.",
+            tags = {"Owner Management"}
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "204",
-                    description = "Client successfully deleted.",
+                    description = "Owner successfully deleted.",
                     content = @Content
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Client not found.",
+                    description = "Owner not found.",
                     content = @Content
             )
     })
-    public ResponseEntity deleteCliente(@PathVariable Long id){
-        boolean isDeleted = clienteService.deleteClienteById(id);
+    public ResponseEntity deletePropietario(@PathVariable Long id){
+        boolean isDeleted = propietarioService.deletePropietarioById(id);
         if (isDeleted){
             return ResponseEntity.noContent().build();
         }
@@ -173,14 +175,14 @@ public class ClienteController {
 
     @GetMapping
     @Operation(
-            summary = "Get List of Active Clients",
-            description = "Returns a paginated list of active clients. If no pagination is provided, the default page size is 5.",
-            tags = {"Client Management"}
+            summary = "Get List of Active Owner",
+            description = "Returns a paginated list of active Owner. If no pagination is provided, the default page size is 5.",
+            tags = {"Owner Management"}
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "A paginated list of active clients.",
+                    description = "A paginated list of active Owner.",
                     content = @Content(mediaType = "application/json")
             ),
             @ApiResponse(
@@ -189,19 +191,17 @@ public class ClienteController {
                     content = @Content(mediaType = "text/plain")
             )
     })
-    public ResponseEntity<PagedModel<EntityModel<ClienteDto>>> clienteList(@Parameter(hidden = true)Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<PropietarioDto>>> clienteList(@Parameter(hidden = true)Pageable pageable) {
         if (pageable.isUnpaged() || pageable.getPageSize() <= 0){
             pageable = Pageable.ofSize(5);
         }
-        Page<ClienteDto> clientesPage = clienteService.findAllActiveCliente(pageable);
-        List<EntityModel<ClienteDto>> entityModels = clientesPage.stream()
+        Page<PropietarioDto> clientesPage = propietarioService.findAllActivePropietario(pageable);
+        List<EntityModel<PropietarioDto>> entityModels = clientesPage.stream()
                 .map(clienteDto -> modelAssembler.toModel(clienteDto)).collect(Collectors.toList());
-        PagedModel<EntityModel<ClienteDto>> clientePageModel = PagedModel.of(entityModels,
+        PagedModel<EntityModel<PropietarioDto>> clientePageModel = PagedModel.of(entityModels,
                 new PagedModel.PageMetadata(clientesPage.getSize(), clientesPage.getNumber(), clientesPage.getTotalElements()));
         return ResponseEntity.ok(clientePageModel);
 
     }
-
-
 
 }

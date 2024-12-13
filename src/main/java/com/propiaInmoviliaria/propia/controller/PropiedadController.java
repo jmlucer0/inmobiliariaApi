@@ -1,6 +1,7 @@
 package com.propiaInmoviliaria.propia.controller;
 
 import com.propiaInmoviliaria.propia.assembler.PropiedadModelAssembler;
+import com.propiaInmoviliaria.propia.dtos.propiedad.ActualizarPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.CrearPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
 import com.propiaInmoviliaria.propia.mapper.PropiedadMapper;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/propiedad")
@@ -177,7 +177,7 @@ public class PropiedadController {
             )
     }
     )
-    public ResponseEntity<EntityModel<PropiedadDto>> actualizarPropiedad(@RequestParam Long id, @RequestBody CrearPropiedadDto propiedadDto){
+    public ResponseEntity<EntityModel<PropiedadDto>> actualizarPropiedad(@RequestParam Long id, @RequestBody ActualizarPropiedadDto propiedadDto){
         Propiedad propiedad = propiedadService.actualizarPropiedad(id, propiedadDto);
         PropiedadDto datosPropiedad = mapper.propiedadDto(propiedad);
         return ResponseEntity.ok(modelAssembler.toModel(datosPropiedad));
@@ -209,104 +209,5 @@ public class PropiedadController {
         }
         return ResponseEntity.notFound().build();
     }
-
-    @GetMapping("/calle-numero-ciudad")
-    @Operation(
-            summary = "Search Real Estate Property by Street, Number, and/or City",
-            description = "Returns a paginated list of Real Estate Property filtered by street, number, and/or city.",
-            tags = {"Real Estate Property Management"},
-            parameters = {
-                    @Parameter(
-                            name = "calle",
-                            description = "The street where the Real Estate Property is located.",
-                            required = false,
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(type = "string")
-                    ),
-                    @Parameter(
-                            name = "numero",
-                            description = "The number of the Real Estate Property street.",
-                            required = false,
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(type = "string")
-                    ),
-                    @Parameter(
-                            name = "ciudad",
-                            description = "The city where the Real Estate Property is located.",
-                            required = false,
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(type = "string")
-                    ),
-                    @Parameter(
-                            name = "page",
-                            description = "The page number to retrieve.",
-                            required = false,
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(type = "integer", example = "0")
-                    ),
-                    @Parameter(
-                            name = "size",
-                            description = "The number of records per page.",
-                            required = false,
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(type = "integer", example = "5")
-                    ),
-                    @Parameter(
-                            name = "sort",
-                            description = "The sorting criteria in the format `Real Estate Property (,asc|desc)`. Default is ascending.",
-                            required = false,
-                            in = ParameterIn.QUERY,
-                            schema = @Schema(type = "string", example = "calle,asc")
-                    )
-            }
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Paginated list of Real Estate Properties matching the filters.",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = PagedModel.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid request. At least one filter must be provided.",
-                    content = @Content(mediaType = "text/plain")
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Internal server error.",
-                    content = @Content(mediaType = "text/plain")
-            )
-    })
-
-    public ResponseEntity<PagedModel<EntityModel<PropiedadDto>>> buscarPorCalleNumeroCiudad(
-            @RequestParam(value = "calle", required = false) String calle,
-            @RequestParam(value = "numero", required = false) String numero,
-            @RequestParam(value = "ciudad", required = false) String ciudad,
-            @Parameter(hidden = true)Pageable pageable){
-        if (pageable.isUnpaged() || pageable.getPageSize() <= 0){
-            pageable = Pageable.ofSize(5);
-        }
-        if (calle == null && numero == null && ciudad == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        Page<PropiedadDto> propiedades = propiedadService.buscarPorCalleYNumero(calle, numero, ciudad, pageable);
-
-        List<EntityModel<PropiedadDto>> entityModels = propiedades.getContent().stream()
-                .map(propiedadDto -> EntityModel.of(propiedadDto,
-                        linkTo(methodOn(PropiedadController.class).buscarPropiedadPorId(propiedadDto.getId())).withSelfRel()))
-                .collect(Collectors.toList());
-
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(
-                propiedades.getSize(), propiedades.getNumber(), propiedades.getTotalElements());
-
-        PagedModel<EntityModel<PropiedadDto>> propiedadPageModel = PagedModel.of(entityModels, pageMetadata);
-
-        return ResponseEntity.ok(propiedadPageModel);
-    }
-
-
 
 }

@@ -3,7 +3,6 @@ package com.propiaInmoviliaria.propia.dtos.propiedad;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.propiaInmoviliaria.propia.enums.TipoDeOperacion;
 import com.propiaInmoviliaria.propia.model.Direccion;
-import com.propiaInmoviliaria.propia.model.Propiedad;
 import com.propiaInmoviliaria.propia.enums.Disponibilidad;
 import com.propiaInmoviliaria.propia.enums.TipoDePropiedad;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,7 @@ import java.util.List;
 public class PropiedadDto {
 
     private Long id;
-    private Long cliente;
+    private Long propietarioId;
     private Long numeroDeReferencia;
     private Direccion direccion;
     private Double superficieTotal;
@@ -35,7 +34,4 @@ public class PropiedadDto {
     private Integer dormitorios;
     private String observaciones;
 
-    public PropiedadDto(Propiedad nuevaPropiedad) {
-
-    }
 }

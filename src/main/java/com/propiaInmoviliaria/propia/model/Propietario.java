@@ -22,11 +22,12 @@ public class Propietario {
 
     @OneToMany
     @ElementCollection
-    private List<Propiedad> propiedades;
+    private List<Propiedad> propiedadList;
 
-    private Boolean activo;
-    private String nombre;
     private String telefono;
+    private String nombre;
+    private String apellido;
     private String email;
+    private Boolean active;
 
 }
