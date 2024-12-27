@@ -46,9 +46,9 @@ public class PropiedadService {
         if (propiedadDto.getPropietarioId() != null) {
             Propietario propietario = propietarioRepository.findById(propiedadDto.getPropietarioId())
                     .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
+
             String numeroDeReferencia = generarNumeroDeReferencia(newPropiedad);
             newPropiedad.setNumeroDeReferencia(numeroDeReferencia);
-
             newPropiedad.setPropietario(propietario);
         }
 

@@ -88,5 +88,5 @@ public class PropiedadMapper {
 
         return propiedad;
     }
-    
+
 }
