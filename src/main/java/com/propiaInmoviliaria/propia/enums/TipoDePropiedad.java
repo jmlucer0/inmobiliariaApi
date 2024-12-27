@@ -7,7 +7,7 @@ public enum TipoDePropiedad {
     OFICINA,
     TERRENO,
     GALPON,
-    CASA_QUINTA,
+    QUINTA,
     CAMPO,
     COCHERA
 }

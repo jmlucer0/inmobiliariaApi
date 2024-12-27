@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 
 
 @Service
@@ -45,8 +46,12 @@ public class PropiedadService {
         if (propiedadDto.getPropietarioId() != null) {
             Propietario propietario = propietarioRepository.findById(propiedadDto.getPropietarioId())
                     .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
+            String numeroDeReferencia = generarNumeroDeReferencia(newPropiedad);
+            newPropiedad.setNumeroDeReferencia(numeroDeReferencia);
+
             newPropiedad.setPropietario(propietario);
         }
+
         propiedadRepository.save(newPropiedad);
         return newPropiedad;
     }
@@ -69,10 +74,6 @@ public class PropiedadService {
         Propiedad propiedad = propiedadRepository.findById(id).orElseThrow(()->new EntityNotFoundException(("Propiedad no enontrada")));
         Propietario propietario = propietarioRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Propietario no encontrado"));
-
-        System.out.println("Propiedad existente: " + propiedad);
-        System.out.println("Propietario existente: " + propiedad.getPropietario().getId());
-        System.out.println("Propietario ID en DTO: " + propiedadDto.getPropietarioId());
         boolean actualizado = propiedadUpdater.actualizarPropiedad(propiedad, propiedadDto, propietario);
 
         if (propiedadDto.getDireccion() != null && propiedad.getDireccion() != null){
@@ -84,8 +85,6 @@ public class PropiedadService {
         return propiedad;
     }
 
-    //crear un metodo para que actualize las imagenes con otro endpoint
-
     public boolean borrarPropiedad(Long id){
         Propiedad propiedad = propiedadRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Propiedad no encontrada"));
         propiedadRepository.deleteById(propiedad.getId());
@@ -95,4 +94,10 @@ public class PropiedadService {
         return true;
     }
 
+    private String generarNumeroDeReferencia(Propiedad propiedad){
+        String numeroDeReferencia = propiedad.getTipoDePropiedad().toString();
+        String uuid = UUID.randomUUID().toString();
+        numeroDeReferencia = numeroDeReferencia.substring(0,2) + "-" + uuid.substring(0,4);
+        return numeroDeReferencia;
+    }
 }

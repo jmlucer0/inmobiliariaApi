@@ -19,7 +19,7 @@ public class PropiedadDto {
 
     private Long id;
     private Long propietarioId;
-    private Long numeroDeReferencia;
+    private String numeroDeReferencia;
     private Direccion direccion;
     private Double superficieTotal;
     private Double superficieCubierta;

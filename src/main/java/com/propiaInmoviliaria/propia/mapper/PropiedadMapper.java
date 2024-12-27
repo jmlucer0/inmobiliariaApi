@@ -1,6 +1,5 @@
 package com.propiaInmoviliaria.propia.mapper;
 
-import com.propiaInmoviliaria.propia.dtos.propiedad.ActualizarPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.CrearPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
 import com.propiaInmoviliaria.propia.model.Propiedad;
@@ -21,6 +20,7 @@ public class PropiedadMapper {
 
         propiedadDto.setSuperficieTotal(propiedad.getSuperficieTotal());
         propiedadDto.setTipoDePropiedad(propiedad.getTipoDePropiedad());
+        propiedadDto.setNumeroDeReferencia(propiedad.getNumeroDeReferencia());
         propiedadDto.setCochera(propiedad.getCochera());
         propiedadDto.setPatio(propiedad.getPatio());
         propiedadDto.setPrecio(propiedad.getPrecio());
@@ -88,10 +88,5 @@ public class PropiedadMapper {
 
         return propiedad;
     }
-
-//    public Propiedad formActuializarToEntity(ActualizarPropiedadDto propiedadDto){
-//        Propiedad propiedad = new Propiedad();
-//
-//
-//    }
+    
 }
