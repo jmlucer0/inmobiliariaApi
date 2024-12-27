@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,7 +30,12 @@ public class Propiedad {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Direccion direccion;
 
-    private List<String> imagenes;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "propiedad_imagenes",
+            joinColumns = @JoinColumn(name = "propiedad_id"))
+    @Column(name = "imagen_url")
+    private List<String> imagenes = new ArrayList<>();
+
     private Double superficieTotal;
     private Double superficieCubierta;
     private Long precio;
