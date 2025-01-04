@@ -93,7 +93,7 @@ public class PropiedadService {
                 dormitorios,
                 direccion
         );
-        Page<Propiedad> lista = (Page<Propiedad>) propiedadRepository.findAll(specification, pageable);
+        Page<Propiedad> lista = propiedadRepository.findAll(specification, pageable);
 
         return lista;
     }
