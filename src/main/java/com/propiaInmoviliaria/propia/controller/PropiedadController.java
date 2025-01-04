@@ -1,15 +1,19 @@
 package com.propiaInmoviliaria.propia.controller;
 
+import com.propiaInmoviliaria.propia.assembler.PropiedadFiltroModelAssembler;
 import com.propiaInmoviliaria.propia.assembler.PropiedadModelAssembler;
 import com.propiaInmoviliaria.propia.dtos.propiedad.ActualizarPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.CrearPropiedadDto;
+import com.propiaInmoviliaria.propia.dtos.propiedad.FiltroPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
+import com.propiaInmoviliaria.propia.enums.Disponibilidad;
+import com.propiaInmoviliaria.propia.enums.TipoDeOperacion;
+import com.propiaInmoviliaria.propia.enums.TipoDePropiedad;
 import com.propiaInmoviliaria.propia.mapper.PropiedadMapper;
 import com.propiaInmoviliaria.propia.model.Propiedad;
 import com.propiaInmoviliaria.propia.service.PropiedadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,11 +40,13 @@ public class PropiedadController {
     private final PropiedadService propiedadService;
     private final PropiedadMapper mapper;
     private final PropiedadModelAssembler modelAssembler;
+    private final PropiedadFiltroModelAssembler filtroModelAssembler;
 
-    public PropiedadController(PropiedadService propiedadService, PropiedadMapper mapper, PropiedadModelAssembler modelAssembler) {
+    public PropiedadController(PropiedadService propiedadService, PropiedadMapper mapper, PropiedadModelAssembler modelAssembler, PropiedadFiltroModelAssembler filtroModelAssembler) {
         this.propiedadService = propiedadService;
         this.mapper = mapper;
         this.modelAssembler = modelAssembler;
+        this.filtroModelAssembler = filtroModelAssembler;
     }
 
     @Operation(
@@ -109,6 +115,57 @@ public class PropiedadController {
         PagedModel<EntityModel<PropiedadDto>> propiedadPageModel = PagedModel.of(entityModels,
                 new PagedModel.PageMetadata(propiedadPage.getSize(), propiedadPage.getNumber(), propiedadPage.getTotalElements()));
         return ResponseEntity.ok(propiedadPageModel);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PagedModel<EntityModel<FiltroPropiedadDto>>> filtrarPropiedades(
+            @Parameter(hidden = true)Pageable pageable,
+            @RequestParam(required = false) String numeroDeReferencia,
+            @RequestParam(required = false) Long precioMin,
+            @RequestParam(required = false) Long precioMax,
+            @RequestParam(required = false) TipoDeOperacion tipoDeOperacion,
+            @RequestParam(required = false) TipoDePropiedad tipoDePropiedad,
+            @RequestParam(required = false) Disponibilidad disponibilidad,
+            @RequestParam(required = false) Boolean cochera,
+            @RequestParam(required = false) Boolean patio,
+            @RequestParam(required = false) Integer banios,
+            @RequestParam(required = false) Integer dormitorios,
+            @RequestParam(required = false) String direccion
+            ){
+        if (pageable.isUnpaged() || pageable.getPageSize() <= 0){
+            pageable = Pageable.ofSize(10);
+        }
+        Page<Propiedad> propiedadPage = propiedadService.buscarConFiltros(
+                pageable,
+                numeroDeReferencia,
+                precioMin,
+                precioMax,
+                tipoDeOperacion,
+                tipoDePropiedad,
+                disponibilidad,
+                cochera,
+                patio,
+                banios,
+                dormitorios,
+                direccion
+        );
+        List<EntityModel<FiltroPropiedadDto>> entityModels = propiedadPage.stream()
+                .map(propiedad -> {
+                    FiltroPropiedadDto dto = mapper.convertirAFiltroPropiedadDto(propiedad);
+                    return filtroModelAssembler.toModel(dto);
+                })
+                .collect(Collectors.toList());
+        PagedModel<EntityModel<FiltroPropiedadDto>> pagedModel = PagedModel.of(
+                entityModels,
+                new PagedModel.PageMetadata(
+                        propiedadPage.getSize(),
+                        propiedadPage.getNumber(),
+                        propiedadPage.getTotalElements(),
+                        propiedadPage.getTotalPages()
+                )
+        );
+
+        return ResponseEntity.ok(pagedModel);
     }
 
     @GetMapping("/{id}")

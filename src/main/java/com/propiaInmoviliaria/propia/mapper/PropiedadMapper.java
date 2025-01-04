@@ -1,6 +1,7 @@
 package com.propiaInmoviliaria.propia.mapper;
 
 import com.propiaInmoviliaria.propia.dtos.propiedad.CrearPropiedadDto;
+import com.propiaInmoviliaria.propia.dtos.propiedad.FiltroPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
 import com.propiaInmoviliaria.propia.model.Propiedad;
 import org.springframework.stereotype.Component;
@@ -62,7 +63,6 @@ public class PropiedadMapper {
         if (propiedadDto.getDireccion() != null) {
             propiedad.setDireccion(direccionMapper.toEntity(propiedadDto.getDireccion()));
         }
-
         return propiedad;
     }
 
@@ -85,8 +85,27 @@ public class PropiedadMapper {
         if (propiedadDto.getDireccion() != null) {
             propiedad.setDireccion(direccionMapper.toEntity(propiedadDto.getDireccion()));
         }
-
         return propiedad;
     }
 
+    public FiltroPropiedadDto convertirAFiltroPropiedadDto(Propiedad propiedad) {
+        FiltroPropiedadDto propiedadDto = new FiltroPropiedadDto();
+        if (propiedad.getDireccion() != null) {
+            propiedadDto.setDireccion(direccionMapper.toEntity(propiedad.getDireccion()));
+        }
+
+        propiedadDto.setNumeroDeReferencia(propiedad.getNumeroDeReferencia());
+        propiedadDto.setSuperficieTotal(propiedad.getSuperficieTotal());
+        propiedadDto.setSuperficieCubierta(propiedad.getSuperficieCubierta());
+        propiedadDto.setImagenes(propiedad.getImagenes());
+        propiedadDto.setPrecio(propiedad.getPrecio());
+        propiedadDto.setTipoDePropiedad(propiedad.getTipoDePropiedad());
+        propiedadDto.setTipoDeOperacion(propiedad.getTipoDeOperacion());
+        propiedadDto.setDisponibilidad(propiedad.getDisponibilidad());
+        propiedadDto.setCochera(propiedad.getCochera());
+        propiedadDto.setPatio(propiedad.getPatio());
+        propiedadDto.setBanios(propiedad.getBanios());
+        propiedadDto.setDormitorios(propiedad.getDormitorios());
+        return propiedadDto;
+    }
 }

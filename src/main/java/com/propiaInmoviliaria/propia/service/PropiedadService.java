@@ -3,11 +3,15 @@ package com.propiaInmoviliaria.propia.service;
 import com.propiaInmoviliaria.propia.dtos.propiedad.ActualizarPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.CrearPropiedadDto;
 import com.propiaInmoviliaria.propia.dtos.propiedad.PropiedadDto;
+import com.propiaInmoviliaria.propia.enums.Disponibilidad;
+import com.propiaInmoviliaria.propia.enums.TipoDeOperacion;
+import com.propiaInmoviliaria.propia.enums.TipoDePropiedad;
 import com.propiaInmoviliaria.propia.mapper.PropiedadMapper;
 import com.propiaInmoviliaria.propia.model.Propietario;
 import com.propiaInmoviliaria.propia.model.Propiedad;
 import com.propiaInmoviliaria.propia.repository.PropietarioRepository;
 import com.propiaInmoviliaria.propia.repository.PropiedadRepository;
+import com.propiaInmoviliaria.propia.specification.SearchPropiedadSpecification;
 import com.propiaInmoviliaria.propia.util.updater.DireccionUpdater;
 import com.propiaInmoviliaria.propia.util.updater.PropiedadUpdater;
 import jakarta.persistence.EntityNotFoundException;
@@ -67,6 +71,31 @@ public class PropiedadService {
             return propiedades.map(mapper::propiedadDto);
         }
         return propiedades.map(mapper::propiedadDto);
+    }
+
+    public Page<Propiedad> buscarConFiltros(
+            Pageable pageable,
+            String numeroDeReferencia,
+            Long precioMin,
+            Long precioMax,
+            TipoDeOperacion tipoDeOperacion, TipoDePropiedad tipoDePropiedad, Disponibilidad disponibilidad, Boolean cochera, Boolean patio, Integer banios, Integer dormitorios, String direccion){
+        SearchPropiedadSpecification specification = new SearchPropiedadSpecification(
+                pageable,
+                numeroDeReferencia,
+                precioMin,
+                precioMax,
+                tipoDeOperacion,
+                tipoDePropiedad,
+                disponibilidad,
+                cochera,
+                patio,
+                banios,
+                dormitorios,
+                direccion
+        );
+        Page<Propiedad> lista = (Page<Propiedad>) propiedadRepository.findAll(specification, pageable);
+
+        return lista;
     }
 
     @Transactional

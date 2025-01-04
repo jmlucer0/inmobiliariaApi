@@ -40,9 +40,13 @@ public class Propiedad {
     private Double superficieCubierta;
     private Long precio;
 
+    @Enumerated(EnumType.STRING)
     private TipoDePropiedad tipoDePropiedad;
+    @Enumerated(EnumType.STRING)
     private Disponibilidad disponibilidad;
+    @Enumerated(EnumType.STRING)
     private TipoDeOperacion tipoDeOperacion;
+
     private Boolean cochera;
     private Boolean patio;
     private Integer banios;
