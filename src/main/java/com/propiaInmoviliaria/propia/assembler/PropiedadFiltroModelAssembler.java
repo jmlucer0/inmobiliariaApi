@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 public class PropiedadFiltroModelAssembler implements RepresentationModelAssembler<FiltroPropiedadDto, EntityModel<FiltroPropiedadDto>> {
     @Override
     public EntityModel<FiltroPropiedadDto> toModel(FiltroPropiedadDto propiedadDto) {
-
         EntityModel<FiltroPropiedadDto> entityModel = EntityModel.of(propiedadDto);
 
         Link selfLink = Link.of("/search").withSelfRel();

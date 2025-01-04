@@ -117,6 +117,86 @@ public class PropiedadController {
         return ResponseEntity.ok(propiedadPageModel);
     }
 
+    @Operation(
+            summary = "Filter properties",
+            description = "Searches real estate properties based on the provided filters. If no filters are specified, returns all properties paginated.",
+            parameters = {
+                    @Parameter(
+                            name = "numeroDeReferencia",
+                            description = "Unique reference number of the property",
+                            example = "CA-f8a0"
+                    ),
+                    @Parameter(
+                            name = "precioMin",
+                            description = "Minimum price of the property",
+                            example = "50000"
+                    ),
+                    @Parameter(
+                            name = "precioMax",
+                            description = "Maximum price of the property",
+                            example = "200000"
+                    ),
+                    @Parameter(
+                            name = "tipoDeOperacion",
+                            description = "Operation type: Sale or Rent",
+                            schema = @Schema(implementation = TipoDeOperacion.class)
+                    ),
+                    @Parameter(
+                            name = "tipoDePropiedad",
+                            description = "Property type: House, Apartment, etc.",
+                            schema = @Schema(implementation = TipoDePropiedad.class)
+                    ),
+                    @Parameter(
+                            name = "disponibilidad",
+                            description = "Availability of the property",
+                            schema = @Schema(implementation = Disponibilidad.class)
+                    ),
+                    @Parameter(
+                            name = "cochera",
+                            description = "Indicates whether the property has a garage",
+                            example = "true"
+                    ),
+                    @Parameter(
+                            name = "patio",
+                            description = "Indicates whether the property has a patio",
+                            example = "true"
+                    ),
+                    @Parameter(
+                            name = "banios",
+                            description = "Number of bathrooms in the property",
+                            example = "2"
+                    ),
+                    @Parameter(
+                            name = "dormitorios",
+                            description = "Number of bedrooms in the property",
+                            example = "3"
+                    ),
+                    @Parameter(
+                            name = "direccion",
+                            description = "Street or address of the property",
+                            example = "742 Evergreen Terrace"
+                    ),
+                    @Parameter(hidden = true) // To exclude 'pageable' from documentation
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "List of filtered properties",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PagedModel.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request. Please verify the provided parameters."
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error"
+                    )
+            }
+    )
     @GetMapping("/search")
     public ResponseEntity<PagedModel<EntityModel<FiltroPropiedadDto>>> filtrarPropiedades(
             @Parameter(hidden = true)Pageable pageable,
@@ -164,7 +244,6 @@ public class PropiedadController {
                         propiedadPage.getTotalPages()
                 )
         );
-
         return ResponseEntity.ok(pagedModel);
     }
 
@@ -234,7 +313,8 @@ public class PropiedadController {
             )
     }
     )
-    public ResponseEntity<EntityModel<PropiedadDto>> actualizarPropiedad(@RequestParam Long id, @RequestBody ActualizarPropiedadDto propiedadDto){
+    public ResponseEntity<EntityModel<PropiedadDto>> actualizarPropiedad(
+            @RequestParam Long id, @RequestBody ActualizarPropiedadDto propiedadDto){
         Propiedad propiedad = propiedadService.actualizarPropiedad(id, propiedadDto);
         PropiedadDto datosPropiedad = mapper.propiedadDto(propiedad);
         return ResponseEntity.ok(modelAssembler.toModel(datosPropiedad));
